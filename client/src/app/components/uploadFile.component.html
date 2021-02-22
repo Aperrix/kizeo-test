@@ -1,0 +1,75 @@
+<form class="form" [formGroup]="uploadFileForm" (ngSubmit)="onSubmit()">
+  <!--DRAG & DROP FIELD-->
+  <ngx-file-drag-drop
+    style="max-width: 100%; margin: 0px; margin-top: 20px; margin-bottom: 20px;"
+    type="file"
+    [multiple]="true"
+    formControlName="files"
+    emptyPlaceholder="Déposez vos fichiers"
+    (valueChanged)="onValueChange($event)"
+  >
+  </ngx-file-drag-drop>
+  <mat-error *ngIf="uploadFileForm.controls['recipients'].invalid">
+    {{ filesErrors() }}
+  </mat-error>
+
+  <!-- RECIPIENTS FIELD -->
+  <mat-form-field class="field">
+    <mat-chip-list #chipList formControlName="recipients" required>
+      <mat-chip
+        *ngFor="let recipient of recipientsList"
+        [removable]="true"
+        (removed)="removeRecipient(recipient)"
+      >
+        {{ recipient }}
+        <mat-icon matChipRemove>cancel</mat-icon>
+      </mat-chip>
+      <input
+        formControlName="recipients"
+        type="email"
+        placeholder="Envoyer à"
+        [errorStateMatcher]="matcher"
+        [matChipInputFor]="chipList"
+        [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+        (matChipInputTokenEnd)="addRecipient($event)"
+        matInput
+      />
+    </mat-chip-list>
+    <mat-error *ngIf="uploadFileForm.controls['recipients'].invalid">
+      {{ recipientsErrors() }}
+    </mat-error>
+  </mat-form-field>
+
+  <!-- SENDER FIELD -->
+  <mat-form-field class="field">
+    <input
+      formControlName="sender"
+      type="email"
+      placeholder="Votre adresse email"
+      [errorStateMatcher]="matcher"
+      matInput
+      required
+    />
+    <mat-error *ngIf="uploadFileForm.controls['sender'].invalid">
+      {{ senderErrors() }}
+    </mat-error>
+  </mat-form-field>
+
+  <!-- MESSAGE FIELD -->
+  <mat-form-field class="field">
+    <textarea matInput placeholder="Message"></textarea>
+  </mat-form-field>
+
+  <span class="spacer"></span>
+
+  <!-- SUBMIT BUTTON -->
+  <button
+    mat-raised-button
+    color="accent"
+    [disabled]="!uploadFileForm.valid"
+    type="submit"
+    class="button"
+  >
+    Transférer
+  </button>
+</form>
